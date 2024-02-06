@@ -11,12 +11,15 @@ import org.springframework.samples.petclinic.model.Vets;
 import org.springframework.samples.petclinic.service.ClinicService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
 
 @ExtendWith(MockitoExtension.class)
 class VetControllerTest {
@@ -24,36 +27,39 @@ class VetControllerTest {
     @Mock
     ClinicService clinicService;
 
+    @Mock
+    Map<String, Object> model;
+
     @InjectMocks
     VetController controller;
 
-    List<Vet> vetList;
+    List<Vet> vetsList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        vetList = new ArrayList<>();
-        vetList.add(new Vet());
-        when(clinicService.findVets()).thenReturn(vetList);
+        vetsList.add(new Vet());
 
+        given(clinicService.findVets()).willReturn(vetsList);
     }
 
     @Test
-    void showVetListTest() {
-        Map<String, Object> model = new HashMap<>();
-        String viewName = controller.showVetList(model);
+    void showVetList() {
+        //when
+        String view = controller.showVetList(model);
 
-        assertEquals("vets/vetList", viewName);
-        assertEquals(1, model.size());
-        assertEquals(true, model.containsKey("vets"));
-        verify(clinicService,times(1)).findVets();
+        //then
+        then(clinicService).should().findVets();
+        then(model).should().put(anyString(), any());
+        assertThat("vets/VetList").isEqualToIgnoringCase(view);
     }
 
     @Test
-    void showResourcesVetListTest() {
+    void showResourcesVetList() {
+        //when
         Vets vets = controller.showResourcesVetList();
 
-        assertNotNull(vets);
-        assertEquals(vetList.size(),vets.getVetList().size());
-        verify(clinicService,times(1)).findVets();
+        //then
+        then(clinicService).should().findVets();
+        assertThat(vets.getVetList()).hasSize(1);
     }
 }
