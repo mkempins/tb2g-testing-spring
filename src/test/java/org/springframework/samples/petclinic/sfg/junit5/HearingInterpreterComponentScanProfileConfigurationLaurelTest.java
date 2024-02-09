@@ -11,10 +11,10 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestPropertySource("classpath:yanny.properties")
+@TestPropertySource("classpath:laurel.properties")
 @ActiveProfiles("externalized-laurel")
-@SpringJUnitConfig(classes = HearingInterpreterComponentScanProfileTest.TestConfig.class)
-public class HearingInterpreterComponentScanProfileConfigurationTest {
+@SpringJUnitConfig(classes = HearingInterpreterComponentScanProfileConfigurationLaurelTest.TestConfig.class)
+public class HearingInterpreterComponentScanProfileConfigurationLaurelTest {
     @Configuration
     @ComponentScan("org.springframework.samples.petclinic.sfg")
     static class TestConfig {
@@ -27,6 +27,6 @@ public class HearingInterpreterComponentScanProfileConfigurationTest {
     void whatIheard() {
         String word = hearingInterpreter.whatIheard();
 
-        assertEquals("yaNNy",word);
+        assertEquals("LauRel",word);
     }
 }
