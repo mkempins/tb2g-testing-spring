@@ -49,6 +49,56 @@ class OwnerControllerTestMy {
     }
 
     @Test
+    void updateOwnerIsValidTest() throws Exception {
+        mockMvc.perform(post("/owners/{ownerId}/edit", 22)
+                .param("firstName", "Alek")
+                .param("lastName", "Balek")
+                .param("address", "Balonowa 2")
+                .param("city","Miastko")
+                .param("telephone", "1234"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/{ownerId}"))
+                .andExpect(redirectedUrl("/owners/22"));
+    }
+
+    @Test
+    void updateOwnerIsNotValidTest() throws Exception {
+        mockMvc.perform(post("/owners/{ownerId}/edit", 22)
+                .param("firstName", "Alek")
+                .param("lastName", "Balek")
+                .param("city","Miastko"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasErrors("owner"))
+                .andExpect(model().attributeHasFieldErrors("owner", "address"))
+                .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+    @Test
+    void newOwnerIsValidTest() throws Exception {
+        mockMvc.perform(post("/owners/new")
+                    .param("firstName", "Alek")
+                    .param("lastName", "Balek")
+                    .param("address", "Balonowa 2")
+                    .param("city","Miastko")
+                    .param("telephone", "1234"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void newOwnerIsNotValidTest() throws Exception {
+        mockMvc.perform(post("/owners/new")
+                    .param("firstName", "Alek")
+                    .param("lastName", "Balek")
+                    .param("city","Miastko"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasErrors("owner"))
+                .andExpect(model().attributeHasFieldErrors("owner", "address"))
+                .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+    @Test
     @DisplayName("Testing owner not found")
     void processFindFormTestNotFound() throws Exception {
         Collection<Owner> owners = new ArrayList<>();
